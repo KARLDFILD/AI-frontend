@@ -9,6 +9,13 @@ interface MessageInput {
   message: string;
 }
 
+interface CharacterInfo {
+  name: string;
+  avatar: string;
+  description: string;
+  creator_id: number;
+}
+
 function Chat() {
   const { id } = useParams();
   const characterId = id ? parseInt(id, 10) : 0;
@@ -25,6 +32,9 @@ function Chat() {
 
   const [sessionId, setSessionId] = useState<number | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
+  const [characterInfo, setCharacterInfo] = useState<CharacterInfo | null>(
+    null
+  );
 
   const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
@@ -63,8 +73,47 @@ function Chat() {
       }
     };
 
+    const fetchCharacterInfo = async () => {
+      try {
+        const accessToken = getToken();
+        const response = await axios.post(
+          "http://localhost:5000/api/character/get-one",
+          { id: characterId },
+          {
+            withCredentials: true,
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
+
+        let avatar = "https://via.placeholder.com/50";
+        if (
+          response.data.character_picture &&
+          response.data.character_picture.data
+        ) {
+          const binary = response.data.character_picture.data;
+          const base64String = btoa(
+            binary.reduce(
+              (data: string, byte: number) => data + String.fromCharCode(byte),
+              ""
+            )
+          );
+          avatar = `data:image/jpeg;base64,${base64String}`;
+        }
+
+        setCharacterInfo({
+          name: response.data.name,
+          avatar,
+          description: response.data.description,
+          creator_id: response.data.creator_id,
+        });
+      } catch (error) {
+        console.error("Ошибка получения информации о персонаже:", error);
+      }
+    };
+
     if (characterId) {
       initializeSession();
+      fetchCharacterInfo();
     }
   }, [characterId]);
 
@@ -141,12 +190,39 @@ function Chat() {
 
   return (
     <div className="flex flex-col h-full w-full md:w-3xl bg-white">
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 border-b border-gray-200 hideScroll">
+      {characterInfo && (
+        <div className="md:hidden p-4 border-b border-gray-200 flex items-center justify-center gap-3 bg-gray-50">
+          <img
+            src={characterInfo.avatar}
+            alt={characterInfo.name}
+            className="w-12 h-12 rounded-full object-cover"
+          />
+          <div className="text-center">
+            <h2 className="text-lg font-semibold">{characterInfo.name}</h2>
+            <p className="text-sm text-gray-600">
+              Creator: {characterInfo.creator_id}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="flex-1 overflow-y-auto p-4  hideScroll">
+        {characterInfo && (
+          <div className="mb-4 text-center">
+            <img
+              src={characterInfo.avatar}
+              alt={characterInfo.name}
+              className="w-16 h-16 rounded-full object-cover mx-auto mb-2"
+            />
+            <h2 className="text-lg font-semibold">{characterInfo.name}</h2>
+            <p className="text-sm text-gray-600">{characterInfo.description}</p>
+          </div>
+        )}
+
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`mb-2 p-2 rounded-lg max-w-[80%] ${
+            className={`mb-2 p-2 rounded-lg w-fit max-w-[80%] ${
               message.sender_type === "USER"
                 ? "bg-primary/30 text-right ml-auto"
                 : "bg-gray-100 mr-auto"
@@ -157,8 +233,7 @@ function Chat() {
         ))}
       </div>
 
-      {/* Input Area */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4">
         <form
           className="flex gap-2 w-full relative"
           onSubmit={handleSendMessage(submitMessage)}
