@@ -1,17 +1,16 @@
 import * as React from "react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavLink } from "react-router-dom";
 import useUserStore from "@/store/useUserStore";
-import { ArrowLeftToLine } from "lucide-react";
+import { Menu, ArrowLeftToLine } from "lucide-react";
 
 export function AppSidebar({
   isOpen,
   setIsOpen,
-  onCloseEnd,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  onCloseEnd?: () => void;
-} & React.ComponentProps<"div">) {
+}) {
   const user = useUserStore((state) => state.user);
   const getUser = useUserStore((state) => state.getUser);
 
@@ -19,34 +18,33 @@ export function AppSidebar({
     getUser();
   }, []);
 
-  React.useEffect(() => {
-    console.log(user);
-  }, [user]);
-
-  const handleTransitionEnd = () => {
-    if (!isOpen && onCloseEnd) {
-      onCloseEnd();
-    }
-  };
-
   return (
-    <div
-      onTransitionEnd={handleTransitionEnd}
-      className={`${
-        isOpen ? "w-64" : "w-0"
-      } h-screen bg-background shadow-lg transition-all duration-300 overflow-hidden flex-shrink-0 fixed z-20`}
-    >
-      <div className="flex flex-col h-full p-4">
-        <div className="flex justify-between mb-4">
-          <p className="text-center flex items-center">LOGO</p>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <button
+          className="p-2 focus:outline-none text-black fixed top-4 left-4 z-30"
+          aria-label="Toggle menu"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
+      </SheetTrigger>
+
+      <SheetContent
+        side="left"
+        className="w-64 px-4 py-6 flex flex-col"
+        hideClose={true}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div className="text-lg font-bold">LOGO</div>
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => setIsOpen(false)}
             className="p-2 focus:outline-none text-black"
-            aria-label="Toggle menu"
+            aria-label="Close sidebar"
           >
             <ArrowLeftToLine className="h-6 w-6" />
           </button>
         </div>
+
         <nav className="flex flex-col gap-4">
           <NavLink
             to="/login"
@@ -80,18 +78,10 @@ export function AppSidebar({
           </NavLink>
         </nav>
 
-        <div className="mt-auto">
-          {user?.user_name ? (
-            <p className="text-sm font-medium text-muted-foreground">
-              {user.user_name}
-            </p>
-          ) : (
-            <p className="text-sm font-medium text-muted-foreground">
-              Not logged in
-            </p>
-          )}
+        <div className="mt-auto pt-6 border-t text-sm text-muted-foreground">
+          {user?.user_name ? `Logged in as ${user.user_name}` : "Not logged in"}
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }
