@@ -3,7 +3,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getToken } from "../utils/getToken";
 import { useParams } from "react-router-dom";
-import { SendHorizontal } from "lucide-react";
+import { SendHorizontal, MoreVertical } from "lucide-react";
+import useUserStore from "@/store/useUserStore";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { SettingsContent } from "./ChatSettings";
 
 interface MessageInput {
   message: string;
@@ -16,7 +25,11 @@ interface CharacterInfo {
   creator_id: number;
 }
 
-function Chat() {
+interface ChatProps {
+  characterInfo: CharacterInfo | null;
+}
+
+function Chat({ characterInfo }: ChatProps) {
   const { id } = useParams();
   const characterId = id ? parseInt(id, 10) : 0;
 
@@ -32,9 +45,8 @@ function Chat() {
 
   const [sessionId, setSessionId] = useState<number | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
-  const [characterInfo, setCharacterInfo] = useState<CharacterInfo | null>(
-    null
-  );
+
+  const user = useUserStore((state) => state.user);
 
   const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
@@ -73,47 +85,8 @@ function Chat() {
       }
     };
 
-    const fetchCharacterInfo = async () => {
-      try {
-        const accessToken = getToken();
-        const response = await axios.post(
-          "http://localhost:5000/api/character/get-one",
-          { id: characterId },
-          {
-            withCredentials: true,
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
-        );
-
-        let avatar = "https://via.placeholder.com/50";
-        if (
-          response.data.character_picture &&
-          response.data.character_picture.data
-        ) {
-          const binary = response.data.character_picture.data;
-          const base64String = btoa(
-            binary.reduce(
-              (data: string, byte: number) => data + String.fromCharCode(byte),
-              ""
-            )
-          );
-          avatar = `data:image/jpeg;base64,${base64String}`;
-        }
-
-        setCharacterInfo({
-          name: response.data.name,
-          avatar,
-          description: response.data.description,
-          creator_id: response.data.creator_id,
-        });
-      } catch (error) {
-        console.error("Ошибка получения информации о персонаже:", error);
-      }
-    };
-
     if (characterId) {
       initializeSession();
-      fetchCharacterInfo();
     }
   }, [characterId]);
 
@@ -189,9 +162,9 @@ function Chat() {
   };
 
   return (
-    <div className="flex flex-col h-full w-full md:w-3xl bg-white">
+    <div className="flex flex-col h-full w-full bg-white">
       {characterInfo && (
-        <div className="md:hidden p-4 border-b border-gray-200 flex items-center justify-center gap-3 bg-gray-50">
+        <div className="lg:hidden p-4 pl-17 border-b border-gray-200 flex items-center justify-start gap-3 bg-background relative">
           <img
             src={characterInfo.avatar}
             alt={characterInfo.name}
@@ -203,10 +176,26 @@ function Chat() {
               Creator: {characterInfo.creator_id}
             </p>
           </div>
+          <Sheet>
+            <SheetTrigger asChild>
+              <button
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 focus:outline-none text-black"
+                aria-label="Open settings"
+              >
+                <MoreVertical className="h-6 w-6" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Chat Settings</SheetTitle>
+              </SheetHeader>
+              <SettingsContent characterInfo={characterInfo} />
+            </SheetContent>
+          </Sheet>
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto p-4  hideScroll">
+      <div className="flex-1 overflow-y-auto w-[90%] items-center justify-center self-center p-4 hideScroll">
         {characterInfo && (
           <div className="mb-4 text-center">
             <img
@@ -228,12 +217,17 @@ function Chat() {
                 : "bg-gray-100 mr-auto"
             }`}
           >
+            <p className="text-xs text-gray-600 mb-1">
+              {message.sender_type === "USER"
+                ? user?.user_name || "You"
+                : characterInfo?.name || "Character"}
+            </p>
             <p>{message.content}</p>
           </div>
         ))}
       </div>
 
-      <div className="p-4">
+      <div className="p-4 w-[90%] items-center justify-center self-center">
         <form
           className="flex gap-2 w-full relative"
           onSubmit={handleSendMessage(submitMessage)}

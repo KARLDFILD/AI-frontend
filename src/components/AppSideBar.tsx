@@ -28,7 +28,7 @@ export function AppSidebar({
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <button
-          className="p-2 focus:outline-none text-black fixed top-4 left-4 z-30"
+          className="p-2 focus:outline-none text-black fixed top-5 left-4 z-30"
           aria-label="Toggle menu"
         >
           <Menu className="h-6 w-6" />
