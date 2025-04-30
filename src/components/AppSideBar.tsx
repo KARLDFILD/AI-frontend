@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { NavLink } from "react-router-dom";
 import useUserStore from "@/store/useUserStore";
 import { Menu, ArrowLeftToLine } from "lucide-react";
@@ -34,7 +40,9 @@ export function AppSidebar({
         className="w-64 px-4 py-6 flex flex-col"
         hideClose={true}
       >
-        <div className="flex items-center justify-between mb-6">
+        <SheetTitle className="sr-only">Sidebar</SheetTitle>
+        <SheetDescription className="sr-only">Main navigation</SheetDescription>
+        <div className="flex items-center justify-between">
           <div className="text-lg font-bold">LOGO</div>
           <button
             onClick={() => setIsOpen(false)}
