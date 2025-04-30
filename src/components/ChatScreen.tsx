@@ -4,14 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getToken } from "../utils/getToken";
 import { useParams } from "react-router-dom";
-
-interface CharacterInfo {
-  name: string;
-  avatar: string;
-  description: string;
-  creator_id: number;
-  creator_name: string;
-}
+import { CharacterInfo } from "@/types/CharacterInfo";
 
 function ChatScreen() {
   const { id } = useParams();

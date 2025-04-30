@@ -1,12 +1,5 @@
 import { MessageCircle, Palette, Volume2, Info } from "lucide-react";
-
-interface CharacterInfo {
-  name: string;
-  avatar: string;
-  description: string;
-  creator_id: number;
-  creator_name: string;
-}
+import { CharacterInfo } from "@/types/CharacterInfo";
 
 interface ChatSettingsProps {
   characterInfo: CharacterInfo | null;

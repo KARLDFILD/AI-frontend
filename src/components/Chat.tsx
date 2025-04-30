@@ -13,17 +13,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import ChatSettings from "./ChatSettings";
+import { CharacterInfo } from "@/types/CharacterInfo";
 
 interface MessageInput {
   message: string;
-}
-
-interface CharacterInfo {
-  name: string;
-  avatar: string;
-  description: string;
-  creator_id: number;
-  creator_name: string;
 }
 
 interface ChatProps {
