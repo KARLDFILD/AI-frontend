@@ -10,6 +10,7 @@ interface CharacterInfo {
   avatar: string;
   description: string;
   creator_id: number;
+  creator_name: string;
 }
 
 function ChatScreen() {
@@ -52,6 +53,7 @@ function ChatScreen() {
           avatar,
           description: response.data.description,
           creator_id: response.data.creator_id,
+          creator_name: response.data.user.user_name,
         });
       } catch (error) {
         console.error("Ошибка получения информации о персонаже:", error);

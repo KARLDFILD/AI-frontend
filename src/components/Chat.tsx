@@ -12,7 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { SettingsContent } from "./ChatSettings";
+import ChatSettings from "./ChatSettings";
 
 interface MessageInput {
   message: string;
@@ -23,6 +23,7 @@ interface CharacterInfo {
   avatar: string;
   description: string;
   creator_id: number;
+  creator_name: string;
 }
 
 interface ChatProps {
@@ -171,9 +172,11 @@ function Chat({ characterInfo }: ChatProps) {
             className="w-12 h-12 rounded-full object-cover"
           />
           <div className="text-center">
-            <h2 className="text-lg font-semibold">{characterInfo.name}</h2>
+            <h2 className="text-lg text-start font-semibold">
+              {characterInfo.name}
+            </h2>
             <p className="text-sm text-gray-600">
-              Creator: {characterInfo.creator_id}
+              Creator: {characterInfo.creator_name}
             </p>
           </div>
           <Sheet>
@@ -189,7 +192,7 @@ function Chat({ characterInfo }: ChatProps) {
               <SheetHeader>
                 <SheetTitle>Chat Settings</SheetTitle>
               </SheetHeader>
-              <SettingsContent characterInfo={characterInfo} />
+              <ChatSettings characterInfo={characterInfo} />
             </SheetContent>
           </Sheet>
         </div>
