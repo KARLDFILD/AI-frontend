@@ -158,7 +158,7 @@ function Chat({ characterInfo }: ChatProps) {
   return (
     <div className="flex flex-col h-full w-full bg-white">
       {characterInfo && (
-        <div className="lg:hidden p-4 pl-17 border-b border-gray-200 flex items-center justify-start gap-3 bg-background relative">
+        <div className="xl:hidden p-4 pl-17 border-b border-gray-200 flex items-center justify-start gap-3 bg-background relative">
           <img
             src={characterInfo.avatar}
             alt={characterInfo.name}

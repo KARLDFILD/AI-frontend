@@ -8,7 +8,7 @@ interface ChatSettingsProps {
 function ChatSettings({ characterInfo }: ChatSettingsProps) {
   return (
     <div className="h-full w-full bg-background">
-      <div className="hidden md:block h-full border-l">
+      <div className=" h-full border-l">
         <div className="p-4 space-y-4">
           {characterInfo && (
             <div className="text-center border-b pb-4">

@@ -63,7 +63,7 @@ function ChatScreen() {
       <div className="w-full flex flex-col items-center">
         <Chat characterInfo={characterInfo} />
       </div>
-      <div className="hidden lg:block w-[400px]">
+      <div className="hidden xl:block w-[400px]">
         <ChatSettings characterInfo={characterInfo} />
       </div>
     </div>
