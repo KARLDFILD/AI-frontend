@@ -168,7 +168,7 @@ function Chat({ characterInfo }: ChatProps) {
             <h2 className="text-lg text-start font-semibold">
               {characterInfo.name}
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-start text-gray-600">
               Creator: {characterInfo.creator_name}
             </p>
           </div>
