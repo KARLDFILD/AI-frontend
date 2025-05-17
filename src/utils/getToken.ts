@@ -15,13 +15,20 @@ export const getToken = (): string | null => {
     const decoded: { exp: number } = jwtDecode(accessToken);
 
     if (decoded.exp * 1000 < Date.now()) {
-      document.cookie =
-        "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      clearToken();
       return null;
     }
 
     return accessToken;
   } catch (e) {
+    clearToken();
     return null;
   }
+};
+
+export const clearToken = () => {
+  document.cookie =
+    "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie =
+    "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 };

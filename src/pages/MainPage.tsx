@@ -17,8 +17,8 @@ function MainPage() {
           <AppSidebar isOpen={isOpen} setIsOpen={setIsOpen} />
         </div>
 
-        <div className="flex flex-col h-full w-full">
-          <div className="w-full h-full bg-white flex flex-col items-center">
+        <div className="flex flex-col w-full h-screen">
+          <div className="w-full h-full bg-white flex flex-col items-center overflow-auto hideScroll">
             <Outlet />
           </div>
         </div>

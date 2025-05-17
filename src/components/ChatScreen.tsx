@@ -1,10 +1,11 @@
-import Chat from "./Chat";
-import ChatSettings from "./ChatSettings";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getToken } from "../utils/getToken";
 import { useParams } from "react-router-dom";
 import { CharacterInfo } from "@/types/CharacterInfo";
+import Chat from "./Chat";
+import ChatSettings from "./ChatSettings";
+import useHistoryStore from "@/store/useHistoryStore";
 
 function ChatScreen() {
   const { id } = useParams();
@@ -12,6 +13,7 @@ function ChatScreen() {
   const [characterInfo, setCharacterInfo] = useState<CharacterInfo | null>(
     null
   );
+  const addToHistory = useHistoryStore((state) => state.addToHistory);
 
   useEffect(() => {
     const fetchCharacterInfo = async () => {
@@ -26,27 +28,23 @@ function ChatScreen() {
           }
         );
 
-        let avatar = "https://via.placeholder.com/50";
-        if (
-          response.data.character_picture &&
-          response.data.character_picture.data
-        ) {
-          const binary = response.data.character_picture.data;
-          const base64String = btoa(
-            binary.reduce(
-              (data: string, byte: number) => data + String.fromCharCode(byte),
-              ""
-            )
-          );
-          avatar = `data:image/jpeg;base64,${base64String}`;
-        }
+        const avatar =
+          response.data.character_picture || "https://via.placeholder.com/50";
 
-        setCharacterInfo({
+        const characterData = {
           name: response.data.name,
           avatar,
           description: response.data.description,
           creator_id: response.data.creator_id,
           creator_name: response.data.user.user_name,
+        };
+
+        setCharacterInfo(characterData);
+
+        addToHistory({
+          id: characterId,
+          name: response.data.name,
+          avatar,
         });
       } catch (error) {
         console.error("Ошибка получения информации о персонаже:", error);
@@ -56,7 +54,7 @@ function ChatScreen() {
     if (characterId) {
       fetchCharacterInfo();
     }
-  }, [characterId]);
+  }, [characterId, addToHistory]);
 
   return (
     <div className="flex h-full w-full bg-white">

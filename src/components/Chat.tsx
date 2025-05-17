@@ -48,6 +48,13 @@ function Chat({ characterInfo }: ChatProps) {
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(submitMessage)();
+    }
+  };
+
   useEffect(() => {
     const initializeSession = async () => {
       try {
@@ -232,6 +239,7 @@ function Chat({ characterInfo }: ChatProps) {
             className="hideScroll border-2 w-full resize-none p-2 pr-14 h-16 min-h-[4rem] max-h-32 rounded-md focus:outline-none focus:border-primary overflow-y-auto"
             placeholder="Введите сообщение..."
             onInput={handleTextareaInput}
+            onKeyDown={handleKeyDown}
             {...messageArea("message")}
           />
           <button

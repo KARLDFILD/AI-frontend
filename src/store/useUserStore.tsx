@@ -1,5 +1,5 @@
-import axios from "axios";
 import { create } from "zustand";
+import axios from "axios";
 import { getToken } from "@/utils/getToken";
 
 interface User {
@@ -16,6 +16,7 @@ interface User {
 interface UserStore {
   user: User | null;
   getUser: () => Promise<void>;
+  setUser: (user: User | null) => void;
 }
 
 const useUserStore = create<UserStore>((set) => ({
@@ -33,6 +34,7 @@ const useUserStore = create<UserStore>((set) => ({
       console.error("Error fetching users:", error);
     }
   },
+  setUser: (user) => set({ user }),
 }));
 
 export default useUserStore;
